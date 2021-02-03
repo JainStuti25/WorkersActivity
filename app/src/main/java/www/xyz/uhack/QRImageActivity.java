@@ -2,21 +2,34 @@ package www.xyz.uhack;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.zxing.WriterException;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
 
 public class QRImageActivity extends AppCompatActivity {
+
+
+    StorageReference mStorage;
+    Button button;
+
+    ProgressDialog progressDialog;
+
 
     String edtValue;
     String inputValue;
@@ -28,16 +41,27 @@ public class QRImageActivity extends AppCompatActivity {
     QRGEncoder qrgEncoder;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrimage);
 
-        ImageView qrImage;
-
 
         qrImage = findViewById(R.id.QR_Image);
+        button = findViewById(R.id.upload);
+        mStorage = FirebaseStorage.getInstance().getReference();
+
+        progressDialog = new ProgressDialog(this);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+            }
+        });
+
+
         inputValue = getIntent().getStringExtra("NAME").trim();
         //inputValue = edtValue.toString().trim();
         if (inputValue.length() > 0) {
@@ -61,9 +85,13 @@ public class QRImageActivity extends AppCompatActivity {
                 Log.v(TAG, e.toString());
             }
         } else {
-System.err.println("Required");        }
+            System.err.println("Required");
+        }
     }
 
-    }
+
+
+
+}
 
 
